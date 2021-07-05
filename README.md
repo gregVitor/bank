@@ -21,6 +21,4 @@ php -S localhost:8080 -t ./public
 # Rodando as migrates do banco de dados
 php artisan migrate
 
-#Rodando os crons manualmente
-
 ```

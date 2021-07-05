@@ -25,23 +25,12 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
 
     $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->group(['prefix' => 'account'], function () use ($router) {
-            $router->post('deposit', 'Transactions\BankAccountController@createAccountDeposit');
-            $router->get('balance', 'Transactions\BankAccountController@getBalance');
-            $router->get('extract', 'Transactions\BankAccountController@getExtract');
+            $router->post('create', 'Account\AccountController@createAccount');
+            $router->post('deposit', 'Account\AccountController@createAccountDeposit');
+            $router->get('balance', 'Account\AccountController@getBalance');
+            $router->get('extract', 'Account\AccountController@getExtract');
         });
 
-        $router->group(['prefix' => 'btc'], function () use ($router) {
-            $router->get('price', 'Bitcoin\BitcoinController@getPrice');
-            $router->get('historic', 'Bitcoin\BitcoinController@getHistoricBitcoinPrice');
-        });
-
-        $router->group(['prefix' => 'investment'], function () use ($router) {
-            $router->post('purchase', 'Transactions\InvestmentController@createPurchase');
-            $router->post('sell', 'Transactions\InvestmentController@createSellInvestment');
-            $router->get('position', 'Transactions\InvestmentController@getInvestmentsPositions');
-            $router->get('volume', 'Transactions\InvestmentController@getMovements');
-
-        });
     });
 
 });
