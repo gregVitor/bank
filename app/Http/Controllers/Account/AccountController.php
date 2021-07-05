@@ -36,11 +36,11 @@ class AccountController extends Controller
     public function __construct(
         AccountRepository $accountRepository,
         AccountService    $accountService,
-        AccountValidator $accountValidator
+        AccountValidator  $accountValidator
     ) {
         $this->accountRepository = $accountRepository;
         $this->accountService    = $accountService;
-        $this->accountValidator = $accountValidator;
+        $this->accountValidator  = $accountValidator;
     }
 
     public function createAccount(Request $request)
@@ -86,7 +86,7 @@ class AccountController extends Controller
     public function getBalance(Request $request)
     {
         try {
-            $balance = $this->accountRepository->getBalance($request->user->id);
+            $balance = $this->accountRepository->getBalance($request->user->id, $request->type);
 
             $data = [
                 'balance' => $balance
@@ -127,6 +127,20 @@ class AccountController extends Controller
             $extract = $this->accountRepository->getExtract($request->user->id, $data, $paginator);
 
             return apiResponse("Ok.", 200, $extract);
+        } catch (\Exception $e) {
+            throw ($e);
+        }
+    }
+
+    public function draft(Request $request)
+    {
+        try {
+
+            $this->accountValidator->createAccountDraft($request->all());
+
+            $balance = $this->accountService->createAccountDraft($request->user, $request->amount, $request->type, 'draft');
+
+            return apiResponse("Valor sacado.", 200, $balance);
         } catch (\Exception $e) {
             throw ($e);
         }

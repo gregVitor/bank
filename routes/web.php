@@ -29,6 +29,8 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
             $router->post('deposit', 'Account\AccountController@createAccountDeposit');
             $router->get('balance', 'Account\AccountController@getBalance');
             $router->get('extract', 'Account\AccountController@getExtract');
+            $router->post('draft', 'Account\AccountController@draft');
+
         });
 
     });

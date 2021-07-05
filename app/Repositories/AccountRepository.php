@@ -37,9 +37,10 @@ class AccountRepository
      * @return float
      */
     public function getBalance(
-        int $userId
+        int    $userId,
+        string $type = 'c'
     ) {
-        $balance = $this->account->where('user_id', $userId)->sum('amount');
+        $balance = $this->account->where('user_id', $userId)->where('type', $type)->sum('amount');
 
         return round($balance, 2);
     }
@@ -62,7 +63,7 @@ class AccountRepository
     ) {
         $deposit = $this->createTransactionAccount($userId, $type, $amount, $operation);
 
-        $balance = $this->getBalance($userId);
+        $balance = $this->getBalance($userId, $type);
 
         $data = (object) [
             'id'         => $deposit->id,
@@ -72,50 +73,6 @@ class AccountRepository
         ];
 
         return $data;
-    }
-
-    /**
-     * Function create transaction account
-     *
-     * @param integer $userId
-     * @param float $amount
-     * @param string $type
-     *
-     * @return Account
-     */
-    private function createTransactionAccount(
-        int    $userId,
-        string $type,
-        float  $amount,
-        string $operation
-    ) {
-
-        $account = $this->account->create([
-            "user_id"   => $userId,
-            "type"      => $type,
-            "amount"    => $amount,
-            "operation" => $operation
-        ]);
-
-        return $account;
-    }
-
-    /**
-     * Function that debits money to create investment
-     *
-     * @param integer $userId
-     * @param float $amount
-     *
-     * @return Account
-     */
-    public function investmentAccount(
-        int    $userId,
-        float  $amount,
-        string $type
-    ) {
-        $deposit = $this->createTransactionAccount($userId, $type, $amount);
-
-        return $deposit;
     }
 
     /**
@@ -190,5 +147,50 @@ class AccountRepository
         $accounts = $accounts->get();
 
         return $accounts;
+    }
+
+    public function draftAccount(
+        int    $userId,
+        float  $amount,
+        string $type,
+        string $operation = 'draft'
+    ) {
+        $draft = $this->createDraftAccount($userId, $type, $amount, $operation);
+
+        return $draft;
+    }
+
+    private function createDraftAccount(
+        int    $userId,
+        string $type,
+        float  $amount,
+        string $operation
+    ) {
+
+        $account = $this->account->create([
+            "user_id"   => $userId,
+            "type"      => $type,
+            "amount"    => $amount,
+            "operation" => $operation
+        ]);
+
+        return $account;
+    }
+
+    private function createTransactionAccount(
+        int    $userId,
+        string $type,
+        float  $amount,
+        string $operation
+    ) {
+
+        $account = $this->account->create([
+            "user_id"   => $userId,
+            "type"      => $type,
+            "amount"    => $amount,
+            "operation" => $operation
+        ]);
+
+        return $account;
     }
 }
